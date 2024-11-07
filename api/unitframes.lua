@@ -14,12 +14,6 @@ end)
 pfUI.uf.frames = {}
 pfUI.uf.delayed = {}
 
--- slash command to toggle unitframe test mode
-_G.SLASH_PFTEST1, _G.SLASH_PFTEST2 = "/pftest", "/pfuftest"
-_G.SlashCmdList.PFTEST = function()
-  pfUI.uf.showall = not pfUI.uf.showall
-end
-
 local scanner
 local glow = {
   edgeFile = pfUI.media["img:glow"], edgeSize = 8,
@@ -445,7 +439,7 @@ function pfUI.uf:UpdateConfig()
   f.alpha_outrange = tonumber(f.config.alpha_outrange)
   f.alpha_offline = tonumber(f.config.alpha_offline)
 
-  f:SetFrameStrata("MEDIUM")
+  f:SetFrameStrata("BACKGROUND")
 
   f.glow:SetFrameStrata("BACKGROUND")
   f.glow:SetFrameLevel(0)
@@ -516,8 +510,10 @@ function pfUI.uf:UpdateConfig()
     fontstyle = C.global.font_unit_style
   end
 
+  f.portrait:SetFrameStrata("LOW")
   f.portrait.tex:SetAllPoints(f.portrait)
   f.portrait.tex:SetTexCoord(.1, .9, .1, .9)
+  f.portrait.model:SetFrameStrata("LOW")
   f.portrait.model:SetAllPoints(f.portrait)
 
   if f.config.portrait == "bar" then
@@ -528,6 +524,8 @@ function pfUI.uf:UpdateConfig()
     if f.portrait.backdrop then f.portrait.backdrop:Hide() end
 
     -- place portrait below fonts
+    f.portrait:SetFrameStrata("BACKGROUND")
+    f.portrait.model:SetFrameStrata("BACKGROUND")
     f.portrait.model:SetFrameLevel(3)
 
     f.portrait:Show()
@@ -1411,7 +1409,7 @@ function pfUI.uf:RefreshIndicators(unit)
   end
 
   if unit.happinessIcon and unit:GetName() == "pfPet" then -- Happiness Icon
-    if unit.config.happinessicon == "0" then
+    if unit.config.happinessicon == "0" or UnitClass("player") == "Warlock" then
       unit.happinessIcon:Hide()
     else
       if UnitIsVisible("pet") then
@@ -1473,9 +1471,6 @@ function pfUI.uf:RefreshUnit(unit, component)
   -- create required fields
   local unitstr = unit.label..unit.id
   local rawborder, default_border = GetBorderSize("unitframes")
-
-  -- save current values
-  unit.namecache = UnitName(unitstr)
 
   -- Buffs
   if unit.buffs and ( component == "all" or component == "aura" ) then
@@ -1741,26 +1736,9 @@ function pfUI.uf:RefreshUnit(unit, component)
           -- match filter
           for _, filter in pairs(unit.indicators) do
             if filter == string.lower(texture) then
-              if string.lower(texture) == "interface\\icons\\spell_nature_rejuvenation" then
-                local start, duration, prediction = libpredict:GetHotDuration(unitstr, "Reju")
-                pfUI.uf:AddIcon(unit, pos, texture, timeleft or prediction, count)
-                pos = pos + 1
-                break
-              elseif string.lower(texture) == "interface\\icons\\spell_holy_renew" then
-                local start, duration, prediction = libpredict:GetHotDuration(unitstr, "Renew")
-                pfUI.uf:AddIcon(unit, pos, texture, timeleft or prediction, count)
-                pos = pos + 1
-                break
-              elseif string.lower(texture) == "interface\\icons\\spell_nature_resistnature" then
-                local start, duration, prediction = libpredict:GetHotDuration(unitstr, "Regr")
-                pfUI.uf:AddIcon(unit, pos, texture, timeleft or prediction, count)
-                pos = pos + 1
-                break
-              else
-                pfUI.uf:AddIcon(unit, pos, texture, timeleft, count)
-                pos = pos + 1
-                break
-              end
+              pfUI.uf:AddIcon(unit, pos, texture, timeleft, count)
+              pos = pos + 1
+              break
             end
           end
         end
