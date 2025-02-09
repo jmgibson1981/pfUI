@@ -710,9 +710,6 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
   end
 
   -- left panel
-
-  DEFAULT_CHAT_FRAME:AddMessage("lol")
-
   pfUI.panel.left = panelCreate("pfPanelLeft", default_border)
   pfUI.panel.left.hide = panelHideCreate(pfUI.panel.left, "LEFT")
   pfUI.panel.left.hide.texture = panelHideTexture(pfUI.panel.left.hide, "pfPanelLeftHide", "left")
@@ -748,8 +745,10 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
     pfUI.panel.left:Hide()
   end
 
+  -- right panel
   pfUI.panel.right = panelCreate("pfPanelRight", default_border)
   pfUI.panel.right.hide = panelHideCreate(pfUI.panel.right, "RIGHT")
+  pfUI.panel.right.hide.texture = panelHideTexture(pfUI.panel.right.hide, "pfPanelRightHide", "right")
 
   if pfUI.chat then
     pfUI.panel.right:SetScale(pfUI.chat.right:GetScale())
@@ -765,8 +764,6 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
   end)
 
   if not pfUI.chat then pfUI.panel.right.hide:Hide() end
-
-  pfUI.panel.right.hide.texture = panelHideTexture(pfUI.panel.right.hide, "pfPanelRightHide", "right")
 
   -- buttons for right panel
   pfUI.panel.right.left = panelButtonCreate(pfUI.panel.right, 115, "LEFT")
@@ -784,6 +781,7 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
     pfUI.panel.right:Hide()
   end
 
+  -- minimap
   pfUI.panel.minimap = CreateFrame("Button", "pfPanelMinimap", UIParent)
   if pfUI.minimap then
     pfUI.panel.minimap:SetWidth(pfUI.minimap:GetWidth())
