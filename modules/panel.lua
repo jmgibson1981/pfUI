@@ -673,10 +673,49 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
     frame.text:SetFontObject(GameFontWhite)
   end
 
+  local function panelCreate(panelname, default_border)
+    frame = CreateFrame("Frame", panelname, UIParent)
+    frame:SetFrameStrata("FULLSCREEN")
+    frame:ClearAllPoints()
+    frame:SetFrameStrata("DIALOG")
+    frame:SetHeight(C.global.font_size*1.5)
+    CreateBackdrop(frame, default_border, nil)
+    CreateBackdropShadow(frame)
+    UpdateMovable(frame)
+    return frame
+  end
 
-  pfUI.panel.left = CreateFrame("Frame", "pfPanelLeft", UIParent)
-  pfUI.panel.left:SetFrameStrata("FULLSCREEN")
-  pfUI.panel.left:ClearAllPoints()
+  local function panelHideCreate(parent, leftright)
+    parent.hide = CreateFrame("Button", nil, parent)
+    parent.hide:SetFrameLevel(4)
+    parent.hide:SetPoint(leftright, parent.backdrop, leftright, 0, 0)
+    parent.hide:SetPoint("TOP", parent.backdrop, "TOP", 0, 0)
+    parent.hide:SetPoint("BOTTOM", parent.backdrop, "BOTTOM", 0, 0)
+    parent.hide:SetWidth(12)
+    return parent.hide
+  end
+
+  local function panelHideTexture(parent, framename, leftright)
+    SkinButton(parent)
+    parent:SetBackdropColor(0,0,0,0)
+
+    parent.texture = parent:CreateTexture(framename)
+    local imgstring = "img:" .. leftright
+    parent.texture:SetTexture(pfUI.media[imgstring])
+    parent.texture:SetPoint("CENTER", 0, 0)
+    parent.texture:SetWidth(8)
+    parent.texture:SetHeight(8)
+    parent.texture:SetVertexColor(.25,.25,.25,1)
+    return parent.texture
+  end
+
+  -- left panel
+
+  DEFAULT_CHAT_FRAME:AddMessage("lol")
+
+  pfUI.panel.left = panelCreate("pfPanelLeft", default_border)
+  pfUI.panel.left.hide = panelHideCreate(pfUI.panel.left, "LEFT")
+  pfUI.panel.left.hide.texture = panelHideTexture(pfUI.panel.left.hide, "pfPanelLeftHide", "left")
 
   if pfUI.chat then
     pfUI.panel.left:SetScale(pfUI.chat.left:GetScale())
@@ -687,35 +726,11 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
     pfUI.panel.left:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 5, 5)
   end
 
-  pfUI.panel.left:SetFrameStrata("DIALOG")
-  pfUI.panel.left:SetHeight(C.global.font_size*1.5)
-
-  CreateBackdrop(pfUI.panel.left, default_border, nil)
-  CreateBackdropShadow(pfUI.panel.left)
-  UpdateMovable(pfUI.panel.left)
-
-  pfUI.panel.left.hide = CreateFrame("Button", nil, pfUI.panel.left)
-  pfUI.panel.left.hide:SetFrameLevel(4)
-  pfUI.panel.left.hide:SetPoint("LEFT", pfUI.panel.left.backdrop, "LEFT", 0, 0)
-  pfUI.panel.left.hide:SetPoint("TOP", pfUI.panel.left.backdrop, "TOP", 0, 0)
-  pfUI.panel.left.hide:SetPoint("BOTTOM", pfUI.panel.left.backdrop, "BOTTOM", 0, 0)
-  pfUI.panel.left.hide:SetWidth(12)
-
   pfUI.panel.left.hide:SetScript("OnClick", function()
     if pfUI.chat.left:IsShown() then pfUI.chat.left:Hide() else pfUI.chat.left:Show() end
   end)
 
   if not pfUI.chat then pfUI.panel.left.hide:Hide() end
-
-  SkinButton(pfUI.panel.left.hide)
-  pfUI.panel.left.hide:SetBackdropColor(0,0,0,0)
-
-  pfUI.panel.left.hide.texture = pfUI.panel.left.hide:CreateTexture("pfPanelLeftHide")
-  pfUI.panel.left.hide.texture:SetTexture(pfUI.media["img:left"])
-  pfUI.panel.left.hide.texture:SetPoint("CENTER", 0, 0)
-  pfUI.panel.left.hide.texture:SetWidth(8)
-  pfUI.panel.left.hide.texture:SetHeight(8)
-  pfUI.panel.left.hide.texture:SetVertexColor(.25,.25,.25,1)
 
   -- buttons for left panel
   pfUI.panel.left.left = panelButtonCreate(pfUI.panel.left, 115, "LEFT")
@@ -733,9 +748,9 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
     pfUI.panel.left:Hide()
   end
 
-  pfUI.panel.right = CreateFrame("Frame", "pfPanelRight", UIParent)
-  pfUI.panel.right:SetFrameStrata("FULLSCREEN")
-  pfUI.panel.right:ClearAllPoints()
+  pfUI.panel.right = panelCreate("pfPanelRight", default_border)
+  pfUI.panel.right.hide = panelHideCreate(pfUI.panel.right, "RIGHT")
+
   if pfUI.chat then
     pfUI.panel.right:SetScale(pfUI.chat.right:GetScale())
     pfUI.panel.right:SetWidth(tonumber(C.chat.right.width) - 4)
@@ -745,35 +760,13 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
     pfUI.panel.right:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -5, 5)
   end
 
-  pfUI.panel.right:SetFrameStrata("DIALOG")
-  pfUI.panel.right:SetHeight(C.global.font_size*1.5)
-
-  CreateBackdrop(pfUI.panel.right, default_border, nil)
-  CreateBackdropShadow(pfUI.panel.right)
-  UpdateMovable(pfUI.panel.right)
-
-  pfUI.panel.right.hide = CreateFrame("Button", nil, pfUI.panel.right)
-  pfUI.panel.right.hide:SetFrameLevel(4)
-  pfUI.panel.right.hide:SetPoint("RIGHT", pfUI.panel.right.backdrop, "RIGHT", 0, 0)
-  pfUI.panel.right.hide:SetPoint("TOP", pfUI.panel.right.backdrop, "TOP", 0, 0)
-  pfUI.panel.right.hide:SetPoint("BOTTOM", pfUI.panel.right.backdrop, "BOTTOM", 0, 0)
-  pfUI.panel.right.hide:SetWidth(12)
-
   pfUI.panel.right.hide:SetScript("OnClick", function()
     if pfUI.chat.right:IsShown() then pfUI.chat.right:Hide() else pfUI.chat.right:Show() end
   end)
 
   if not pfUI.chat then pfUI.panel.right.hide:Hide() end
 
-  SkinButton(pfUI.panel.right.hide)
-  pfUI.panel.right.hide:SetBackdropColor(0,0,0,0)
-
-  pfUI.panel.right.hide.texture = pfUI.panel.right.hide:CreateTexture("pfPanelRightHide")
-  pfUI.panel.right.hide.texture:SetTexture(pfUI.media["img:right"])
-  pfUI.panel.right.hide.texture:SetPoint("CENTER", 0, 0)
-  pfUI.panel.right.hide.texture:SetWidth(8)
-  pfUI.panel.right.hide.texture:SetHeight(8)
-  pfUI.panel.right.hide.texture:SetVertexColor(.25,.25,.25,1)
+  pfUI.panel.right.hide.texture = panelHideTexture(pfUI.panel.right.hide, "pfPanelRightHide", "right")
 
   -- buttons for right panel
   pfUI.panel.right.left = panelButtonCreate(pfUI.panel.right, 115, "LEFT")
