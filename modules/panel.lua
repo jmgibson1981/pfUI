@@ -632,6 +632,11 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
         { pfUI.panel.right.center, C.panel.right.center },
         { pfUI.panel.right.right,  C.panel.right.right },
         { pfUI.panel.minimap,      C.panel.other.minimap },
+        { pfUI.panel.top.left,     C.panel.top.left },
+        { pfUI.panel.top.lcenter,  C.panel.top.lcenter },
+        { pfUI.panel.top.center,   C.panel.top.center },
+        { pfUI.panel.top.rcenter,  C.panel.top.rcenter },
+        { pfUI.panel.top.right,    C.panel.top.right },
       }
     end
 
@@ -654,7 +659,7 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
     end
   end
 
-  local function panelButtonCreate(parent, width, location)
+  local function panelButtonCreate(parent, width, location, tjustify)
     local frame = CreateFrame("Button", nil, parent)
       frame:SetFrameLevel(0)
       frame:ClearAllPoints()
@@ -665,6 +670,7 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
       frame.text:ClearAllPoints()
       frame.text:SetAllPoints(frame)
       frame.text:SetPoint(location, 0, 0)
+      frame.text:SetJustifyH(tjustify)
       return frame
   end
 
@@ -709,9 +715,48 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
     return parent.texture
   end
 
+  -- top panel
+  local width = GetScreenWidth()
+  pfUI.panel.top = panelCreate("pfPanelTop", default_border)
+  pfUI.panel.top:SetWidth(width)
+  pfUI.panel.top:SetPoint("TOP", UIParent, "TOP", 0, 0)
+
+  -- top panel buttons 
+
+  local spacer = width / 6
+  local revspacer = spacer - (spacer * 2)
+
+  -- center indicator
+  pfUI.panel.top.center = panelButtonCreate(pfUI.panel.top, spacer, "CENTER", "CENTER")
+  setButtonFont(pfUI.panel.top.center, font, font_size, GameFontWhite)
+
+  -- all others positioned relative to center
+  -- left indicators
+
+  -- left center
+  pfUI.panel.top.lcenter = panelButtonCreate(pfUI.panel.top, spacer, "CENTER", "CENTER")
+  setButtonFont(pfUI.panel.top.lcenter, font, font_size, GameFontWhite)
+  pfUI.panel.top.lcenter:SetPoint("CENTER", pfUI.panel.top.center, revspacer, 0)
+  -- left
+  pfUI.panel.top.left = panelButtonCreate(pfUI.panel.top, spacer, "CENTER", "CENTER")
+  setButtonFont(pfUI.panel.top.left, font, font_size, GameFontWhite)
+  pfUI.panel.top.left:SetPoint("CENTER", pfUI.panel.top.lcenter, revspacer, 0)
+
+  -- right indicators
+
+  -- right center
+  pfUI.panel.top.rcenter = panelButtonCreate(pfUI.panel.top, spacer, "CENTER", "CENTER")
+  setButtonFont(pfUI.panel.top.rcenter, font, font_size, GameFontWhite)
+  pfUI.panel.top.rcenter:SetPoint("CENTER", pfUI.panel.top.center, spacer, 0)
+  -- right
+  pfUI.panel.top.right = panelButtonCreate(pfUI.panel.top, spacer, "CENTER", "CENTER")
+  setButtonFont(pfUI.panel.top.right, font, font_size, GameFontWhite)
+  pfUI.panel.top.right:SetPoint("CENTER", pfUI.panel.top.rcenter, spacer, 0)
+
   -- left panel
+
   pfUI.panel.left = panelCreate("pfPanelLeft", default_border)
-  pfUI.panel.left.hide = panelHideCreate(pfUI.panel.left, "LEFT")
+  pfUI.panel.left.hide = panelHideCreate(pfUI.panel.left, "LEFT", -5)
   pfUI.panel.left.hide.texture = panelHideTexture(pfUI.panel.left.hide, "pfPanelLeftHide", "left")
 
   if pfUI.chat then
@@ -730,13 +775,13 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
   if not pfUI.chat then pfUI.panel.left.hide:Hide() end
 
   -- buttons for left panel
-  pfUI.panel.left.left = panelButtonCreate(pfUI.panel.left, 115, "LEFT")
+  pfUI.panel.left.left = panelButtonCreate(pfUI.panel.left, 115, "LEFT", "CENTER")
   setButtonFont(pfUI.panel.left.left, font, font_size, GameFontWhite)
 
-  pfUI.panel.left.center = panelButtonCreate(pfUI.panel.left, 115, "CENTER")
+  pfUI.panel.left.center = panelButtonCreate(pfUI.panel.left, 115, "CENTER", "CENTER")
   setButtonFont(pfUI.panel.left.center, font, font_size, GameFontWhite)
 
-  pfUI.panel.left.right = panelButtonCreate(pfUI.panel.left, 115, "RIGHT")
+  pfUI.panel.left.right = panelButtonCreate(pfUI.panel.left, 115, "RIGHT", "CENTER")
   setButtonFont(pfUI.panel.left.right, font, font_size, GameFontWhite)
 
   if C.panel.left.left == "none"
@@ -747,7 +792,7 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
 
   -- right panel
   pfUI.panel.right = panelCreate("pfPanelRight", default_border)
-  pfUI.panel.right.hide = panelHideCreate(pfUI.panel.right, "RIGHT")
+  pfUI.panel.right.hide = panelHideCreate(pfUI.panel.right, "RIGHT", 5)
   pfUI.panel.right.hide.texture = panelHideTexture(pfUI.panel.right.hide, "pfPanelRightHide", "right")
 
   if pfUI.chat then
@@ -766,13 +811,13 @@ pfUI:RegisterModule("panel", "vanilla:tbc", function()
   if not pfUI.chat then pfUI.panel.right.hide:Hide() end
 
   -- buttons for right panel
-  pfUI.panel.right.left = panelButtonCreate(pfUI.panel.right, 115, "LEFT")
+  pfUI.panel.right.left = panelButtonCreate(pfUI.panel.right, 115, "LEFT", "CENTER")
   setButtonFont(pfUI.panel.right.left, font, font_size, GameFontWhite)
 
-  pfUI.panel.right.center = panelButtonCreate(pfUI.panel.right, 115, "CENTER")
+  pfUI.panel.right.center = panelButtonCreate(pfUI.panel.right, 115, "CENTER", "CENTER")
   setButtonFont(pfUI.panel.right.center, font, font_size, GameFontWhite)
 
-  pfUI.panel.right.right = panelButtonCreate(pfUI.panel.right, 115, "RIGHT")
+  pfUI.panel.right.right = panelButtonCreate(pfUI.panel.right, 115, "RIGHT", "CENTER")
   setButtonFont(pfUI.panel.right.right, font, font_size, GameFontWhite)
 
   if C.panel.right.left == "none"
